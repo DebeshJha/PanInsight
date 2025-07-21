@@ -1,5 +1,6 @@
 {
   "name": "paninsight",
+  "homepage": "https://DebeshJha.github.io/PanInsight",
   "version": "1.0.0",
   "description": "AI-Powered Early Detection of Pancreatic Cancer",
   "private": true,
@@ -24,7 +25,9 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d dist"
   },
   "browserslist": {
     "production": [
