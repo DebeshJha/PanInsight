@@ -19,7 +19,7 @@ const HomePage: React.FC = () => {
               to="/our-work"
               className="inline-flex items-center px-4 py-2 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm border border-slate-200/50 dark:border-slate-700/50 rounded-full text-slate-700 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 font-medium transition-all duration-300 hover:shadow-lg hover:scale-105"
             >
-              Our Work
+              Our Project
             </Link>
           </div>
         </div>
