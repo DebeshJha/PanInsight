@@ -11,6 +11,19 @@ const HomePage: React.FC = () => {
     <div className="min-h-screen bg-white dark:bg-slate-900 transition-colors duration-300">
       <ThemeToggle isDark={isDark} onToggle={toggleTheme} />
       
+    
+      <header className="px-4 py-6 sm:px-6 lg:px-8">
+        <div className="max-w-6xl mx-auto flex justify-between items-center">
+          <div className="flex items-center gap-4">
+            <Link
+              to="/our-work"
+              className="inline-flex items-center px-4 py-2 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm border border-slate-200/50 dark:border-slate-700/50 rounded-full text-slate-700 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 font-medium transition-all duration-300 hover:shadow-lg hover:scale-102"
+            >
+              Our Project
+            </Link>
+          </div>
+        </div>
+      </header>
       
       <section className="relative px-4 py-16 sm:px-6 lg:px-8 lg:py-24">
         <div className="mx-auto max-w-4xl text-center">

@@ -25,13 +25,16 @@ const UploadScan: React.FC<UploadScanProps> = ({ onAnalyze }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
 
-  const acceptedTypes = ['.dcm', '.jpg', '.jpeg', '.png'];
+  const acceptedTypes = ['.dcm', '.nii', '.nii.gz', '.nrrd'];
   const acceptedMimeTypes = [
-    'image/jpeg',
-    'image/jpg', 
-    'image/png',
     'application/dicom',
-    'application/octet-stream'
+    'application/octet-stream',
+    'application/x-nifti',
+    'application/gzip',
+    'application/x-nrrd',
+    'application/nii',
+    'application/nii.gz',
+    'application/nrrd',
   ];
 
   const formatFileSize = (bytes: number): string => {
@@ -68,7 +71,7 @@ const UploadScan: React.FC<UploadScanProps> = ({ onAnalyze }) => {
 
   const handleFileSelect = useCallback(async (file: File) => {
     if (!validateFile(file)) {
-      alert('Please select a valid medical image file (.dcm, .jpg, .jpeg, .png) under 50MB.');
+      alert('Please select a valid medical image file (.dcm, .nii, .nii.gz, .nrrd) under 50MB.');
       return;
     }
 
@@ -331,8 +334,9 @@ const UploadScan: React.FC<UploadScanProps> = ({ onAnalyze }) => {
                 </p>
                 <div className="flex items-center justify-center space-x-2 text-xs text-slate-500 dark:text-slate-500 mt-4">
                   <span className="px-2 py-1 bg-slate-100 dark:bg-slate-700 rounded-full">.dcm</span>
-                  <span className="px-2 py-1 bg-slate-100 dark:bg-slate-700 rounded-full">.jpg</span>
-                  <span className="px-2 py-1 bg-slate-100 dark:bg-slate-700 rounded-full">.png</span>
+                  <span className="px-2 py-1 bg-slate-100 dark:bg-slate-700 rounded-full">.nii</span>
+                  <span className="px-2 py-1 bg-slate-100 dark:bg-slate-700 rounded-full">.nii.gz</span>
+                  <span className="px-2 py-1 bg-slate-100 dark:bg-slate-700 rounded-full">.nrrd</span>
                   <span className="px-2 py-1 bg-slate-100 dark:bg-slate-700 rounded-full">max 50MB</span>
                 </div>
               </div>
@@ -340,7 +344,7 @@ const UploadScan: React.FC<UploadScanProps> = ({ onAnalyze }) => {
               <input
                 ref={fileInputRef}
                 type="file"
-                accept=".dcm,.jpg,.jpeg,.png"
+                accept=".dcm,.nii,.nii.gz,.nrrd"
                 onChange={handleFileInputChange}
                 className="hidden"
               />
