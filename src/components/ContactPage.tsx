@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import backgroundImage from '../assets/background.jpg';
 
 const ContactPage: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -22,7 +23,7 @@ const ContactPage: React.FC = () => {
   };
 
   return (
-    <div className="relative min-h-screen flex flex-col" style={{ backgroundImage: `url('/background.jpg')`, backgroundSize: 'cover', backgroundPosition: 'center' }}>
+    <div className="relative min-h-screen flex flex-col" style={{ backgroundImage: `url(${backgroundImage})`, backgroundSize: 'cover', backgroundPosition: 'center' }}>
       <div className="absolute inset-0 bg-slate-900/20 backdrop-blur-sm z-0" />
       <div className="relative z-10">
         <header className="max-w-6xl mx-auto px-4 pt-8 flex justify-between items-center">

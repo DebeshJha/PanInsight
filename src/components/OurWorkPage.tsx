@@ -1,9 +1,13 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import backgroundImage from '../assets/background.jpg';
+import professorImage from '../assets/Professor.jpeg';
+import meImage from '../assets/me.png';
+import mem2Image from '../assets/mem2.jpeg';
 
 const OurProjectPage: React.FC = () => {
   return (
-    <div className="relative min-h-screen flex flex-col" style={{ backgroundImage: `url('/background.jpg')`, backgroundSize: 'cover', backgroundPosition: 'center' }}>
+    <div className="relative min-h-screen flex flex-col" style={{ backgroundImage: `url(${backgroundImage})`, backgroundSize: 'cover', backgroundPosition: 'center' }}>
       <div className="absolute inset-0 bg-slate-900/20 backdrop-blur-sm z-0" />
       <div className="relative z-10">
         <header className="max-w-6xl mx-auto px-4 pt-8 flex justify-between items-center">
@@ -32,7 +36,7 @@ const OurProjectPage: React.FC = () => {
             <div className="grid md:grid-cols-3 gap-8">
              
                 <div className="bg-slate-800/90 rounded-2xl shadow-lg p-8 border border-slate-600/50 flex flex-col items-center">
-                  <img src="/Professor.jpeg" alt="Dr. Debesh Jha" className="w-32 h-32 rounded-full object-cover border-4 border-blue-700 shadow-md mb-4" />
+                  <img src={professorImage} alt="Dr. Debesh Jha" className="w-32 h-32 rounded-full object-cover border-4 border-blue-700 shadow-md mb-4" />
                   <h3 className="text-xl font-bold text-blue-300 mb-1">Dr. Debesh Jha</h3>
                   <p className="text-slate-300 font-medium mb-1">Technical Lead</p>
                   <p className="text-slate-400 text-sm mb-2">Ph.D. in Computer Science</p>
@@ -42,14 +46,14 @@ const OurProjectPage: React.FC = () => {
                 {/* Me */}
                
                 <div className="bg-slate-800/90 rounded-2xl shadow-lg p-8 border border-slate-600/50 flex flex-col items-center">
-                  <img src="/me.png" alt="Harshith Reddy Nalla" className="w-32 h-32 rounded-full object-cover border-4 border-pink-700 shadow-md mb-4" />
-                  <h3 className="text-xl font-bold text-pink-300 mb-1">Harshith Reddy Nalla</h3>
+                  <img src={meImage} alt="Harshith Reddy Nalla" className="w-32 h-32 rounded-full object-cover border-4 border-pink-700 shadow-md mb-4" />
+                  <h3 className="text-xl font-bold text-pink-300 mb-1 whitespace-nowrap">Harshith Reddy Nalla</h3>
                   <p className="text-slate-300 font-medium mb-1">Full-stack Developer</p>
                   <p className="text-slate-400 text-center text-sm">A full-stack developer working on frontend, backend, and system architecture.</p>
                 </div>
                
                 <div className="bg-slate-800/90 rounded-2xl shadow-lg p-8 border border-slate-600/50 flex flex-col items-center">
-                  <img src="/mem2.jpeg" alt="Sai Sankar Swarna" className="w-32 h-32 rounded-full object-cover border-4 border-green-700 shadow-md mb-4" />
+                  <img src={mem2Image} alt="Sai Sankar Swarna" className="w-32 h-32 rounded-full object-cover border-4 border-green-700 shadow-md mb-4" />
                   <h3 className="text-xl font-bold text-green-300 mb-1">Sai Sankar Swarna</h3>
                   <p className="text-slate-300 font-medium mb-1">Backend & MLOps</p>
                   <p className="text-slate-400 text-center text-sm">Manages backend services, API development, and MLOps workflows.</p>
