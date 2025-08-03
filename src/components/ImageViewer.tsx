@@ -322,7 +322,7 @@ const ImageViewer: React.FC<ImageViewerProps> = ({ imageSrc, fileName, onClose, 
               <div className="flex items-center space-x-3 mb-4">
                 <button
                   onClick={() => handleZoom('out')}
-                  className="w-12 h-12 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-full flex items-center justify-center text-slate-600 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 hover:border-blue-300 dark:hover:border-blue-600 transition-all duration-200 hover:scale-105"
+                  className="w-12 h-12 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-full flex items-center justify-center text-slate-600 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 hover:border-blue-300 dark:hover:border-blue-600 transition-all duration-200 hover:scale-103"
                   aria-label="Zoom out"
                 >
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -338,7 +338,7 @@ const ImageViewer: React.FC<ImageViewerProps> = ({ imageSrc, fileName, onClose, 
                 
                 <button
                   onClick={() => handleZoom('in')}
-                  className="w-12 h-12 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-full flex items-center justify-center text-slate-600 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 hover:border-blue-300 dark:hover:border-blue-600 transition-all duration-200 hover:scale-105"
+                  className="w-12 h-12 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-full flex items-center justify-center text-slate-600 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 hover:border-blue-300 dark:hover:border-blue-600 transition-all duration-200 hover:scale-103"
                   aria-label="Zoom in"
                 >
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -359,7 +359,7 @@ const ImageViewer: React.FC<ImageViewerProps> = ({ imageSrc, fileName, onClose, 
               
               <button
                 onClick={handleRotate}
-                className="w-full h-12 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg flex items-center justify-center text-slate-600 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 hover:border-blue-300 dark:hover:border-blue-600 transition-all duration-200 hover:scale-105"
+                className="w-full h-12 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg flex items-center justify-center text-slate-600 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 hover:border-blue-300 dark:hover:border-blue-600 transition-all duration-200 hover:scale-103"
                 aria-label="Rotate 90 degrees"
               >
                 <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -421,7 +421,7 @@ const ImageViewer: React.FC<ImageViewerProps> = ({ imageSrc, fileName, onClose, 
             <div className="mb-6">
               <button
                 onClick={handleReset}
-                className="w-full h-12 bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white rounded-lg font-medium transition-all duration-200 hover:scale-105 flex items-center justify-center"
+                className="w-full h-12 bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white rounded-lg font-medium transition-all duration-200 hover:scale-103 flex items-center justify-center"
                 aria-label="Reset all controls"
               >
                 <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -435,7 +435,7 @@ const ImageViewer: React.FC<ImageViewerProps> = ({ imageSrc, fileName, onClose, 
             <div className="mb-6">
               <button
                 onClick={handleSave}
-                className="w-full h-12 bg-green-600 hover:bg-green-700 dark:bg-green-500 dark:hover:bg-green-600 text-white rounded-lg font-medium transition-all duration-200 hover:scale-105 flex items-center justify-center"
+                className="w-full h-12 bg-green-600 hover:bg-green-700 dark:bg-green-500 dark:hover:bg-green-600 text-white rounded-lg font-medium transition-all duration-200 hover:scale-103 flex items-center justify-center"
                 aria-label="Save edited image"
               >
                 <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
