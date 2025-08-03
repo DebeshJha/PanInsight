@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { ThemeContext } from '../theme/ThemeContext';
 import ImageViewer from './ImageViewer';
 import ThemeToggle from './ThemeToggle';
+import { requireAuth } from '../utils/authUtils';
 
 interface UploadScanProps {
   onAnalyze?: (file: File) => void;
@@ -24,6 +25,13 @@ const UploadScan: React.FC<UploadScanProps> = ({ onAnalyze }) => {
   const [showViewer, setShowViewer] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
+
+  // Check authentication on component mount
+  useEffect(() => {
+    if (!requireAuth(navigate)) {
+      return;
+    }
+  }, [navigate]);
 
   const acceptedTypes = ['.dcm', '.nii', '.nii.gz', '.nrrd'];
   const acceptedMimeTypes = [
@@ -128,6 +136,11 @@ const UploadScan: React.FC<UploadScanProps> = ({ onAnalyze }) => {
 
   const handleAnalyze = async () => {
     if (!fileInfo || !hasConsent) return;
+    
+    // Double-check authentication before analysis
+    if (!requireAuth(navigate)) {
+      return;
+    }
 
     setIsAnalyzing(true);
     

@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { ThemeContext } from '../theme/ThemeContext';
 import ThemeToggle from '../components/ThemeToggle';
 import pancreasIcon from '../assets/pancreas-icon.png';
+import { FcGoogle } from 'react-icons/fc';
 
 const CreateAccountPage: React.FC = () => {
 
@@ -12,6 +13,7 @@ const CreateAccountPage: React.FC = () => {
     firstName: '',
     lastName: '',
     dateOfBirth: '',
+    gender: '',
     email: '',
     password: '',
     confirmPassword: ''
@@ -22,59 +24,95 @@ const CreateAccountPage: React.FC = () => {
   const { isDark, toggleTheme } = useContext(ThemeContext);
 
 
-  const sendLoginRequest = async()=>{
-    const response:any = await fetch('http://localhost:8080/api/auth/register',{
+  const sendLoginRequest = async () => {
+    const response = await fetch('http://localhost:8080/api/auth/register', {
       method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body : JSON.stringify(
-        {
-          firstName:formData.firstName,
-          lastName:formData.lastName,
-          dateOfBirth:formData.dateOfBirth,
-          email:formData.email,
-          password:formData.password,
-          confirmPassword:formData.confirmPassword
-        }
-      )
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        dateOfBirth: formData.dateOfBirth,
+        gender: formData.gender,
+        email: formData.email,
+        password: formData.password,
+        confirmPassword: formData.confirmPassword
+      })
     });
 
-    if(!response.ok){
-      throw new Error("Registeration was not successfull :${response.stauts}");
+    if (!response.ok) {
+      throw new Error(`Registration was not successful: ${response.status}`);
     }
 
-    const result = response.json();
-
-    console.log("User Registered Suessfully",result);
-
+    const result = await response.json();
+    console.log("User Registered Successfully", result);
+    return result;
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsLoading(true);
     
-    setTimeout(() => {
-      setIsLoading(false);
+    // Validate all required fields
+    if (!formData.firstName.trim()) {
+      alert("First Name is required");
+      return;
+    }
     
-      console.log('Account creation attempt:', formData);
-    }, 2000);
-
-    if(formData.password !== formData.confirmPassword){
-      alert ("Password doesn't Match please check");
+    if (!formData.lastName.trim()) {
+      alert("Last Name is required");
+      return;
+    }
+    
+    if (!formData.dateOfBirth) {
+      alert("Date of Birth is required");
+      return;
+    }
+    
+    if (!formData.gender) {
+      alert("Gender is required");
+      return;
+    }
+    
+    if (!formData.email.trim()) {
+      alert("Email Address is required");
+      return;
+    }
+    
+    if (!formData.password) {
+      alert("Password is required");
+      return;
+    }
+    
+    if (!formData.confirmPassword) {
+      alert("Confirm Password is required");
       return;
     }
 
-    sendLoginRequest();
-    navigate('/login');
+    if(formData.password !== formData.confirmPassword){
+      alert("Password doesn't Match please check");
+      return;
+    }
 
-    setFormData({
-      firstName:'',
-      lastName:'',
-      email:'',
-      dateOfBirth:'',
-      password:'',
-      confirmPassword:''
-    })
-
+    setIsLoading(true);
+    
+    try {
+      await sendLoginRequest();
+      navigate('/login');
+      
+      setFormData({
+        firstName:'',
+        lastName:'',
+        email:'',
+        dateOfBirth:'',
+        gender:'',
+        password:'',
+        confirmPassword:''
+      });
+    } catch (error) {
+      console.error('Registration failed:', error);
+      alert('Registration failed. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const togglePasswordVisibility = () => {
@@ -85,9 +123,14 @@ const CreateAccountPage: React.FC = () => {
     setShowConfirmPassword(!showConfirmPassword);
   };
 
+  const handleGoogleSignUp = () => {
+    console.log('Google sign-up clicked');
+    // Add Google sign-up logic here
+  };
+
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 transition-all duration-500">
+    <div className={`min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 transition-all duration-500 ${isDark ? 'dark' : ''}`}>
       
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
         <div className="absolute -top-40 -right-40 w-80 h-80 bg-blue-400 dark:bg-blue-600 rounded-full mix-blend-multiply dark:mix-blend-screen filter blur-xl opacity-20 animate-blob"></div>
@@ -196,9 +239,27 @@ const CreateAccountPage: React.FC = () => {
                         id="dateOfBirth"
                         value={formData.dateOfBirth}
                         onChange={(e) => setFormData({ ...formData, dateOfBirth: e.target.value })}
-                        className="w-full px-4 py-3 border border-slate-300 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white/50 dark:bg-slate-700/50 backdrop-blur-sm text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-400 transition-all duration-200"
+                        className="w-full px-4 py-3 border border-slate-300 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white/50 dark:bg-slate-700/50 backdrop-blur-sm text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-400 transition-all duration-200 [&::-webkit-calendar-picker-indicator]:filter [&::-webkit-calendar-picker-indicator]:dark:invert"
                         required
                       />
+                    </div>
+
+                    <div>
+                      <label htmlFor="gender" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                        Gender
+                      </label>
+                      <select
+                        id="gender"
+                        value={formData.gender}
+                        onChange={(e) => setFormData({ ...formData, gender: e.target.value })}
+                        className="w-full px-4 py-3 border border-slate-300 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white/50 dark:bg-slate-700/50 backdrop-blur-sm text-slate-900 dark:text-white transition-all duration-200"
+                        required
+                      >
+                        <option value="">Select gender</option>
+                        <option value="male">Male</option>
+                        <option value="female">Female</option>
+                        <option value="prefer-not-to-say">Prefer not to say</option>
+                      </select>
                     </div>
 
                   
@@ -323,6 +384,28 @@ const CreateAccountPage: React.FC = () => {
                         </Link>
                       </p>
                     </div>
+
+                    
+                    <div className="relative">
+                      <div className="absolute inset-0 flex items-center">
+                        <div className="w-full border-t border-slate-300 dark:border-slate-600" />
+                      </div>
+                      <div className="relative flex justify-center text-sm">
+                        <span className="px-2 bg-white/80 dark:bg-slate-800/80 text-slate-500 dark:text-slate-400">
+                          Or continue with
+                        </span>
+                      </div>
+                    </div>
+
+                    
+                    <button
+                      type="button"
+                      onClick={handleGoogleSignUp}
+                      className="w-full inline-flex justify-center py-3 px-4 border border-slate-300 dark:border-slate-600 rounded-xl shadow-sm bg-white/50 dark:bg-slate-700/50 backdrop-blur-sm text-sm font-medium text-slate-700 dark:text-slate-300 hover:bg-white/70 dark:hover:bg-slate-700/70 transition-all duration-200"
+                    >
+                      <FcGoogle className="w-5 h-5 mr-2" />
+                      Sign up with Google
+                    </button>
 
                     
                     <div className="text-center">

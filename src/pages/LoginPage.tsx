@@ -9,6 +9,7 @@ const LoginPage: React.FC = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({ email: '', password: '' });
   const [isLoading, setIsLoading] = useState(false);
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [error, setError] = useState('');
@@ -17,7 +18,74 @@ const LoginPage: React.FC = () => {
   useEffect(() => {
     const authStatus = localStorage.getItem('isAuthenticated') === 'true';
     setIsAuthenticated(authStatus);
+    
+    // Check if user just completed OAuth2 flow
+    const urlParams = new URLSearchParams(window.location.search);
+    const oauth2Success = urlParams.get('oauth2_success');
+    const oauth2Failure = urlParams.get('oauth2_failure');
+    
+    if (oauth2Success === 'true') {
+      handleOAuth2Success();
+    } else if (oauth2Failure === 'true') {
+      setError('Google login failed. Please try again.');
+    }
   }, []);
+
+  const handleOAuth2Success = async () => {
+    try {
+      setIsGoogleLoading(true);
+      setError('');
+      
+      // Call the OAuth2 success endpoint to get user data
+      const response = await fetch('http://localhost:8080/api/auth/oauth2-success', {
+        method: 'GET',
+        credentials: 'include',
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        console.log('OAuth2 login successful:', result);
+        
+        if (result.success && result.data && result.data.user) {
+          localStorage.setItem('isAuthenticated', 'true');
+          localStorage.setItem('userData', JSON.stringify(result.data.user));
+          localStorage.setItem('loginType', 'GOOGLE_OAUTH2');
+          setIsAuthenticated(true);
+          setError('');
+          
+          // Clean up URL parameters
+          window.history.replaceState({}, document.title, window.location.pathname);
+          
+          sessionStorage.setItem('justLoggedIn', 'true');
+          navigate('/');
+        } else {
+          throw new Error('Invalid OAuth2 response');
+        }
+      } else {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'OAuth2 login failed');
+      }
+    } catch (error) {
+      console.error('OAuth2 success handler error:', error);
+      setError(error instanceof Error ? error.message : 'OAuth2 login failed');
+    } finally {
+      setIsGoogleLoading(false);
+    }
+  };
+
+  const handleGoogleLogin = async () => {
+    try {
+      setIsGoogleLoading(true);
+      setError('');
+      
+      // Redirect to Spring Boot OAuth2 authorization endpoint
+      window.location.href = 'http://localhost:8080/oauth2/authorization/google';
+    } catch (error) {
+      console.error('Google login error:', error);
+      setError('Failed to initiate Google login');
+      setIsGoogleLoading(false);
+    }
+  };
 
   const sendLoginRequest = async () => {
     try {
@@ -47,6 +115,7 @@ const LoginPage: React.FC = () => {
       
       localStorage.setItem('isAuthenticated', 'true');
       localStorage.setItem('userData', JSON.stringify(result.data));
+      localStorage.setItem('loginType', 'EMAIL_PASSWORD');
       setIsAuthenticated(true);
       setError('');
       return result;
@@ -59,21 +128,49 @@ const LoginPage: React.FC = () => {
 
   const handleLogout = async () => {
     try {
+      console.log('Attempting logout...');
+      
+      // Clear local storage first (client-side logout)
+      localStorage.removeItem('isAuthenticated');
+      localStorage.removeItem('userData');
+      localStorage.removeItem('loginType');
+      setIsAuthenticated(false);
+      setFormData({ email: '', password: '' });
+      setError('');
+      
+      // Try to call backend logout endpoint
       const response = await fetch('http://localhost:8080/api/auth/logout', {
         method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
         credentials: 'include',
       });
 
+      console.log('Logout response status:', response.status);
+      
       if (response.ok) {
-        localStorage.removeItem('isAuthenticated');
-        localStorage.removeItem('userData');
-        setIsAuthenticated(false);
-        setFormData({ email: '', password: '' });
-        setError('');
-        navigate('/login');
+        console.log('Backend logout successful');
+        sessionStorage.clear();
+      } else {
+        console.log('Backend logout failed, but client-side logout completed');
       }
+      
+      // Show success message and navigate to login page
+      alert('Logged out successfully! 👋');
+      navigate('/login');
+      
     } catch (error) {
       console.error('Logout error:', error);
+      // Even if there's an error, clear client-side data and redirect
+      localStorage.removeItem('isAuthenticated');
+      localStorage.removeItem('userData');
+      localStorage.removeItem('loginType');
+      setIsAuthenticated(false);
+      setFormData({ email: '', password: '' });
+      setError('');
+      alert('Logged out successfully! 👋');
+      navigate('/login');
     }
   };
 
@@ -84,7 +181,8 @@ const LoginPage: React.FC = () => {
     
     try {
       await sendLoginRequest();
-      navigate('/upload');
+      sessionStorage.setItem('justLoggedIn', 'true');
+      navigate('/');
     } catch (error) {
       console.error('Submit error:', error);
     } finally {
@@ -128,7 +226,7 @@ const LoginPage: React.FC = () => {
             className="group inline-flex items-center px-4 py-2 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm border border-slate-200/50 dark:border-slate-700/50 rounded-lg shadow-sm hover:shadow-md transition-all duration-200"
           >
             <img src={pancreasIcon} alt="Logo" className="w-6 h-6 mr-2" />
-            <span className="font-semibold text-gray-900 dark:text-white">PancreasAI</span>
+            <span className="font-semibold text-gray-900 dark:text-white">PanInsight</span>
           </Link>
           <ThemeToggle isDark={isDark} onToggle={toggleTheme} />
         </div>
@@ -140,15 +238,14 @@ const LoginPage: React.FC = () => {
             <h2 className="text-3xl font-extrabold text-gray-900 dark:text-white">
               Sign in to your account
             </h2>
-            <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
-              Or{' '}
+            <div className="mt-4">
               <Link
                 to="/register"
-                className="font-medium text-indigo-600 hover:text-indigo-500 dark:text-indigo-400 dark:hover:text-indigo-300"
+                className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-lg text-indigo-700 bg-indigo-100 hover:bg-indigo-200 dark:text-indigo-300 dark:bg-indigo-900/30 dark:hover:bg-indigo-900/50 transition-colors duration-200"
               >
-                create a new account
+                Create a new account
               </Link>
-            </p>
+            </div>
           </div>
 
           {error && (
@@ -212,19 +309,7 @@ const LoginPage: React.FC = () => {
               </div>
             </div>
 
-            <div className="flex items-center justify-between">
-              <div className="flex items-center">
-                <input
-                  id="remember-me"
-                  name="remember-me"
-                  type="checkbox"
-                  className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
-                />
-                <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-900 dark:text-gray-300">
-                  Remember me
-                </label>
-              </div>
-
+            <div className="flex items-center justify-end">
               <div className="text-sm">
                 <a href="#" className="font-medium text-indigo-600 hover:text-indigo-500 dark:text-indigo-400 dark:hover:text-indigo-300">
                   Forgot your password?
@@ -263,11 +348,19 @@ const LoginPage: React.FC = () => {
               <div className="mt-6">
                 <button
                   type="button"
-                  onClick={() => console.log('Google sign-in clicked')}
-                  className="w-full inline-flex justify-center py-2 px-4 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm bg-white dark:bg-gray-800 text-sm font-medium text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-200"
+                  onClick={handleGoogleLogin}
+                  disabled={isGoogleLoading}
+                  className="w-full inline-flex justify-center py-2 px-4 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm bg-white dark:bg-gray-800 text-sm font-medium text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
                 >
-                  <FcGoogle className="w-5 h-5 mr-2" />
-                  Sign in with Google
+                  {isGoogleLoading ? (
+                    <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                  ) : (
+                    <FcGoogle className="w-5 h-5 mr-2" />
+                  )}
+                  {isGoogleLoading ? 'Signing in with Google...' : 'Sign in with Google'}
                 </button>
               </div>
             </div>
