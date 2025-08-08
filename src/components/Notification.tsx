@@ -43,13 +43,13 @@ const Notification: React.FC<NotificationProps> = ({
   const getIcon = () => {
     switch (type) {
       case 'success':
-        return '🎉';
+        return '';
       case 'error':
-        return '❌';
+        return '';
       case 'info':
-        return 'ℹ️';
+        return '';
       default:
-        return '🎉';
+        return '';
     }
   };
 

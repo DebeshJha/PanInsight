@@ -3,7 +3,6 @@ import { Link, useNavigate } from 'react-router-dom';
 import { ThemeContext } from '../theme/ThemeContext';
 import ImageViewer from './ImageViewer';
 import ThemeToggle from './ThemeToggle';
-import { requireAuth } from '../utils/authUtils';
 
 interface UploadScanProps {
   onAnalyze?: (file: File) => void;
@@ -26,12 +25,7 @@ const UploadScan: React.FC<UploadScanProps> = ({ onAnalyze }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
 
-  // Check authentication on component mount
-  useEffect(() => {
-    if (!requireAuth(navigate)) {
-      return;
-    }
-  }, [navigate]);
+
 
   const acceptedTypes = ['.dcm', '.nii', '.nii.gz', '.nrrd'];
   const acceptedMimeTypes = [
@@ -137,17 +131,14 @@ const UploadScan: React.FC<UploadScanProps> = ({ onAnalyze }) => {
   const handleAnalyze = async () => {
     if (!fileInfo || !hasConsent) return;
     
-    // Double-check authentication before analysis
-    if (!requireAuth(navigate)) {
-      return;
-    }
+
 
     setIsAnalyzing(true);
     
     try {
       await new Promise(resolve => setTimeout(resolve, 3000));
       
-      // Generate sample report data
+      
       const sampleReportData = {
         scanType: fileInfo.file.name.toLowerCase().endsWith('.dcm') ? 'DICOM CT Scan' : 'Medical Image',
         analysisDate: new Date().toLocaleDateString('en-US', { 
@@ -183,7 +174,7 @@ const UploadScan: React.FC<UploadScanProps> = ({ onAnalyze }) => {
         followUpTimeline: "Recommended follow-up in 6-12 months with repeat imaging and consultation with your healthcare provider."
       };
       
-      // Store report data in localStorage and navigate to report page
+    
       localStorage.setItem('paninsight-report', JSON.stringify(sampleReportData));
       navigate('/report', { state: { reportData: sampleReportData } });
       
@@ -243,7 +234,7 @@ const UploadScan: React.FC<UploadScanProps> = ({ onAnalyze }) => {
 
       
       <div className="relative max-w-6xl mx-auto px-4 pt-8 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-start">
           <Link
             to="/"
             className="group inline-flex items-center px-4 py-2 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm border border-slate-200/50 dark:border-slate-700/50 rounded-full text-slate-700 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 font-medium transition-all duration-300 hover:shadow-lg hover:scale-103"
@@ -252,15 +243,6 @@ const UploadScan: React.FC<UploadScanProps> = ({ onAnalyze }) => {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
             </svg>
             Back to Home
-          </Link>
-          <Link
-            to="/login"
-            className="inline-flex items-center px-6 py-2 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold rounded-full shadow-lg transition-all duration-300 hover:shadow-xl transform hover:scale-103"
-          >
-            <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
-            </svg>
-            Login
           </Link>
         </div>
       </div>

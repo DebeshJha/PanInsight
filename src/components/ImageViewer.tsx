@@ -31,7 +31,7 @@ const ImageViewer: React.FC<ImageViewerProps> = ({ imageSrc, fileName, onClose, 
   const imageRef = useRef<HTMLImageElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  
+
   const handleZoom = useCallback((direction: 'in' | 'out') => {
     setViewerState(prev => ({
       ...prev,

@@ -51,7 +51,7 @@ const CreateAccountPage: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Validate all required fields
+    
     if (!formData.firstName.trim()) {
       alert("First Name is required");
       return;
@@ -92,11 +92,24 @@ const CreateAccountPage: React.FC = () => {
       return;
     }
 
+    if(formData.dateOfBirth > new Date().toISOString().split('T')[0]){
+      alert("Date of Birth cannot be in the future");
+      return;
+    }
+
     setIsLoading(true);
     
     try {
-      await sendLoginRequest();
-      navigate('/login');
+      const result = await sendLoginRequest();
+      
+      
+      if (result.data && result.data.redirectUrl) {
+        
+        sessionStorage.setItem('registrationData', JSON.stringify(formData));
+        navigate(result.data.redirectUrl);
+      } else {
+        navigate('/login');
+      }
       
       setFormData({
         firstName:'',
@@ -125,7 +138,7 @@ const CreateAccountPage: React.FC = () => {
 
   const handleGoogleSignUp = () => {
     console.log('Google sign-up clicked');
-    // Add Google sign-up logic here
+    
   };
 
 
@@ -255,7 +268,7 @@ const CreateAccountPage: React.FC = () => {
                         className="w-full px-4 py-3 border border-slate-300 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white/50 dark:bg-slate-700/50 backdrop-blur-sm text-slate-900 dark:text-white transition-all duration-200"
                         required
                       >
-                        <option value="">Select gender</option>
+                        <option value="" disabled>Select gender</option>
                         <option value="male">Male</option>
                         <option value="female">Female</option>
                         <option value="prefer-not-to-say">Prefer not to say</option>

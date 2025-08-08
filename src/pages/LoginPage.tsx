@@ -19,7 +19,7 @@ const LoginPage: React.FC = () => {
     const authStatus = localStorage.getItem('isAuthenticated') === 'true';
     setIsAuthenticated(authStatus);
     
-    // Check if user just completed OAuth2 flow
+    
     const urlParams = new URLSearchParams(window.location.search);
     const oauth2Success = urlParams.get('oauth2_success');
     const oauth2Failure = urlParams.get('oauth2_failure');
@@ -35,8 +35,6 @@ const LoginPage: React.FC = () => {
     try {
       setIsGoogleLoading(true);
       setError('');
-      
-      // Call the OAuth2 success endpoint to get user data
       const response = await fetch('http://localhost:8080/api/auth/oauth2-success', {
         method: 'GET',
         credentials: 'include',
@@ -44,7 +42,7 @@ const LoginPage: React.FC = () => {
 
       if (response.ok) {
         const result = await response.json();
-        console.log('OAuth2 login successful:', result);
+        console.log('OAuth2 login successful:');
         
         if (result.success && result.data && result.data.user) {
           localStorage.setItem('isAuthenticated', 'true');
@@ -53,7 +51,7 @@ const LoginPage: React.FC = () => {
           setIsAuthenticated(true);
           setError('');
           
-          // Clean up URL parameters
+          
           window.history.replaceState({}, document.title, window.location.pathname);
           
           sessionStorage.setItem('justLoggedIn', 'true');
@@ -78,7 +76,7 @@ const LoginPage: React.FC = () => {
       setIsGoogleLoading(true);
       setError('');
       
-      // Redirect to Spring Boot OAuth2 authorization endpoint
+      
       window.location.href = 'http://localhost:8080/oauth2/authorization/google';
     } catch (error) {
       console.error('Google login error:', error);
@@ -90,7 +88,7 @@ const LoginPage: React.FC = () => {
   const sendLoginRequest = async () => {
     try {
       console.log('Sending login request to:', 'http://localhost:8080/api/auth/login');
-      console.log('Request body:', { email: formData.email, password: formData.password });
+      console.log('Request body:', { email: formData.email});
       
       const response = await fetch('http://localhost:8080/api/auth/login', {
         method: 'POST',
@@ -130,7 +128,7 @@ const LoginPage: React.FC = () => {
     try {
       console.log('Attempting logout...');
       
-      // Clear local storage first (client-side logout)
+      
       localStorage.removeItem('isAuthenticated');
       localStorage.removeItem('userData');
       localStorage.removeItem('loginType');
@@ -138,7 +136,7 @@ const LoginPage: React.FC = () => {
       setFormData({ email: '', password: '' });
       setError('');
       
-      // Try to call backend logout endpoint
+      
       const response = await fetch('http://localhost:8080/api/auth/logout', {
         method: 'POST',
         headers: {
@@ -156,20 +154,20 @@ const LoginPage: React.FC = () => {
         console.log('Backend logout failed, but client-side logout completed');
       }
       
-      // Show success message and navigate to login page
-      alert('Logged out successfully! 👋');
+      
+      alert('Logged out successfully!');
       navigate('/login');
       
     } catch (error) {
       console.error('Logout error:', error);
-      // Even if there's an error, clear client-side data and redirect
+      
       localStorage.removeItem('isAuthenticated');
       localStorage.removeItem('userData');
       localStorage.removeItem('loginType');
       setIsAuthenticated(false);
       setFormData({ email: '', password: '' });
       setError('');
-      alert('Logged out successfully! 👋');
+      alert('Logged out successfully!');
       navigate('/login');
     }
   };
@@ -197,7 +195,7 @@ const LoginPage: React.FC = () => {
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 transition-all duration-500">
         <div className="text-center">
           <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
-            You are logged in! 🎉
+            You are logged in!
           </h2>
           <button
             onClick={handleLogout}
@@ -238,14 +236,6 @@ const LoginPage: React.FC = () => {
             <h2 className="text-3xl font-extrabold text-gray-900 dark:text-white">
               Sign in to your account
             </h2>
-            <div className="mt-4">
-              <Link
-                to="/register"
-                className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-lg text-indigo-700 bg-indigo-100 hover:bg-indigo-200 dark:text-indigo-300 dark:bg-indigo-900/30 dark:hover:bg-indigo-900/50 transition-colors duration-200"
-              >
-                Create a new account
-              </Link>
-            </div>
           </div>
 
           {error && (
@@ -309,11 +299,19 @@ const LoginPage: React.FC = () => {
               </div>
             </div>
 
-            <div className="flex items-center justify-end">
+            <div className="flex items-center justify-between">
+            <div>
+              <Link
+                to="/register"
+                className="inline-flex items-center px-4 py-2 text-sm font-medium rounded-lg text-indigo-700 bg-indigo-100 hover:bg-indigo-200 dark:text-indigo-300 dark:bg-indigo-900/30 dark:hover:bg-indigo-900/50 transition-colors duration-200"
+              >
+                Create a new account
+              </Link>
+            </div>
               <div className="text-sm">
-                <a href="#" className="font-medium text-indigo-600 hover:text-indigo-500 dark:text-indigo-400 dark:hover:text-indigo-300">
+                <Link to="/forgot-password" className="font-medium text-indigo-600 hover:text-indigo-500 dark:text-indigo-400 dark:hover:text-indigo-300">
                   Forgot your password?
-                </a>
+                </Link>
               </div>
             </div>
 
@@ -321,7 +319,7 @@ const LoginPage: React.FC = () => {
               <button
                 type="submit"
                 disabled={isLoading}
-                className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
+                className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
               >
                 {isLoading ? (
                   <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
@@ -350,7 +348,7 @@ const LoginPage: React.FC = () => {
                   type="button"
                   onClick={handleGoogleLogin}
                   disabled={isGoogleLoading}
-                  className="w-full inline-flex justify-center py-2 px-4 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm bg-white dark:bg-gray-800 text-sm font-medium text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
+                  className="text-black w-full inline-flex justify-center py-2 px-4 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm bg-gray-300 hover:bg-gray-400 text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
                 >
                   {isGoogleLoading ? (
                     <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
