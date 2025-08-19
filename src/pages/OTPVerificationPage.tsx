@@ -2,6 +2,7 @@ import React, { useState, useContext } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { ThemeContext } from '../theme/ThemeContext';
 import ThemeToggle from '../components/ThemeToggle';
+import { API_ENDPOINTS } from '../config/api';
 
 const OTPVerificationPage: React.FC = () => {
   const [searchParams] = useSearchParams();
@@ -51,7 +52,7 @@ const OTPVerificationPage: React.FC = () => {
 
       console.log('Sending request to backend:', requestBody);
 
-      const response = await fetch('http://localhost:8080/api/auth/verify-registration-otp', {
+      const response = await fetch(API_ENDPOINTS.VERIFY_REGISTRATION_OTP, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -96,7 +97,7 @@ const OTPVerificationPage: React.FC = () => {
     setMessage('');
 
     try {
-      const response = await fetch('http://localhost:8080/api/auth/resend-registration-otp', {
+      const response = await fetch(API_ENDPOINTS.RESEND_REGISTRATION_OTP, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

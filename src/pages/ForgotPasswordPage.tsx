@@ -2,6 +2,7 @@ import React, { useState, useContext } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { ThemeContext } from '../theme/ThemeContext';
 import ThemeToggle from '../components/ThemeToggle';
+import { API_ENDPOINTS } from '../config/api';
 
 const ForgotPasswordPage: React.FC = () => {
   const navigate = useNavigate();
@@ -24,7 +25,7 @@ const ForgotPasswordPage: React.FC = () => {
     setMessage('');
 
     try {
-      const response = await fetch('http://localhost:8080/api/auth/forgot-password', {
+      const response = await fetch(API_ENDPOINTS.FORGOT_PASSWORD, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

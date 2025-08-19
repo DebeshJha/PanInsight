@@ -2,6 +2,7 @@ import React, { useState, useContext } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { ThemeContext } from '../theme/ThemeContext';
 import ThemeToggle from '../components/ThemeToggle';
+import { API_ENDPOINTS } from '../config/api';
 
 const VerifyEmailPage: React.FC = () => {
   const navigate = useNavigate();
@@ -20,7 +21,7 @@ const VerifyEmailPage: React.FC = () => {
     setMessage('');
 
     try {
-      const response = await fetch('http://localhost:8080/api/auth/verify-email', {
+      const response = await fetch(API_ENDPOINTS.VERIFY_EMAIL, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -57,7 +58,7 @@ const VerifyEmailPage: React.FC = () => {
     setMessage('');
 
     try {
-      const response = await fetch('http://localhost:8080/api/auth/resend-verification', {
+      const response = await fetch(API_ENDPOINTS.RESEND_VERIFICATION, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

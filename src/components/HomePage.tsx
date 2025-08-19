@@ -6,6 +6,7 @@ import { ThemeContext } from '../theme/ThemeContext';
 import { requireAuth, isOAuth2User } from '../utils/authUtils';
 import Notification from './Notification';
 import PancreaticChatbot from './PancreaticChatbot';
+import { API_ENDPOINTS } from '../config/api';
 
 const HomePage: React.FC = () => {
   const { isDark, toggleTheme } = useContext(ThemeContext);
@@ -30,6 +31,25 @@ const HomePage: React.FC = () => {
       setUserData(JSON.parse(userDataStr));
     }
     
+    // Check for OAuth2 success/failure parameters (handle both regular and hash routing)
+    let urlParams;
+    if (window.location.hash.includes('?')) {
+      // Hash routing - parameters are after #/?
+      const hashParams = window.location.hash.split('?')[1];
+      urlParams = new URLSearchParams(hashParams);
+    } else {
+      // Regular routing - parameters are in search
+      urlParams = new URLSearchParams(window.location.search);
+    }
+    const oauth2Success = urlParams.get('oauth2_success');
+    const oauth2Failure = urlParams.get('oauth2_failure');
+    
+    if (oauth2Success === 'true' || oauth2Failure === 'true') {
+      // Redirect to login page to handle OAuth2 response
+      navigate('/login');
+      return;
+    }
+    
     const justLoggedIn = sessionStorage.getItem('justLoggedIn');
     if (justLoggedIn === 'true') {
       setNotification({
@@ -39,7 +59,7 @@ const HomePage: React.FC = () => {
       });
       sessionStorage.removeItem('justLoggedIn');
     }
-  }, []);
+  }, [navigate]);
 
   const closeNotification = () => {
     setNotification(prev => ({ ...prev, isVisible: false }));
@@ -55,7 +75,7 @@ const HomePage: React.FC = () => {
       setIsAuthenticated(false);
       setUserData(null);
       
-      const response = await fetch('http://localhost:8080/api/auth/logout', {
+      const response = await fetch(API_ENDPOINTS.LOGOUT, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -144,10 +164,10 @@ const HomePage: React.FC = () => {
                  </button>
                </div>
              ) : (
-               <Link
-                 to="/login"
-                 className="inline-flex items-center justify-center px-3 py-2 sm:px-6 bg-blue-600 hover:bg-blue-800 hover:shadow-md hover:shadow-blue-300/50 text-white font-semibold rounded-full shadow-lg transition-all duration-300 transform hover:scale-103 text-sm sm:text-base min-h-[44px]"
-               >
+                <Link
+                  to="/login"
+                  className="inline-flex items-center justify-center px-3 py-2 sm:px-6 bg-blue-600 hover:bg-blue-700 sm:hover:bg-blue-800 hover:shadow-md hover:shadow-blue-300/50 text-white font-semibold rounded-full shadow-lg transition-all duration-300 transform hover:scale-103 text-sm sm:text-base min-h-[44px]"
+                >
                  <svg className="w-4 h-4 mr-1 sm:mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
                  </svg>
@@ -175,7 +195,7 @@ const HomePage: React.FC = () => {
               ) : (
                 <Link
                   to="/login"
-                  className="inline-flex items-center justify-center px-3 py-2 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold rounded-full shadow-lg transition-all duration-300 hover:shadow-xl transform hover:scale-103 text-xs min-h-[36px]"
+                  className="inline-flex items-center justify-center px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-full shadow-lg transition-all duration-300 hover:shadow-xl transform hover:scale-103 text-xs min-h-[36px]"
                 >
                   <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
@@ -318,9 +338,40 @@ const HomePage: React.FC = () => {
                 <h3 className="text-xl font-semibold text-slate-900 dark:text-white mb-3">
                   Report & Assist
                 </h3>
-                <p className="text-slate-400 dark:text-slate-400">
+                <p className="text-slate-700 dark:text-slate-400">
                   Receive detailed reports with actionable insights and recommendations.
                 </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="mt-16 text-center">
+            <div className="inline-flex items-center justify-center p-4 bg-gradient-to-r from-green-100 to-blue-100 dark:from-green-900/30 dark:to-blue-900/30 rounded-2xl">
+              <div className="flex items-center space-x-4">
+                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-green-500 dark:bg-green-400">
+                  <svg className="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                  </svg>
+                </div>
+                <div className="text-left">
+                  <h3 className="text-lg font-semibold text-slate-900 dark:text-white">
+                    AI Health Assistant
+                  </h3>
+                  <p className="text-slate-600 dark:text-slate-400">
+                    {isAuthenticated 
+                      ? "Chat with our AI assistant about pancreatic health questions. Available 24/7!"
+                      : "Login to access our AI health assistant for personalized pancreatic health guidance."
+                    }
+                  </p>
+                  {!isAuthenticated && (
+                    <Link
+                      to="/login"
+                      className="inline-flex items-center mt-2 text-sm font-medium text-green-600 dark:text-green-400 hover:text-green-700 dark:hover:text-green-300"
+                    >
+                      Login to access →
+                    </Link>
+                  )}
+                </div>
               </div>
             </div>
           </div>
@@ -334,8 +385,6 @@ const HomePage: React.FC = () => {
           </p>
         </div>
       </footer>
-      
-      {/* Pancreatic Health Chatbot */}
       <PancreaticChatbot />
     </div>
   );

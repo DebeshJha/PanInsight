@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { ThemeContext } from '../theme/ThemeContext';
 import ThemeToggle from '../components/ThemeToggle';
 import pancreasIcon from '../assets/pancreas-icon.png';
+import { API_ENDPOINTS } from '../config/api';
 import { FcGoogle } from 'react-icons/fc';
 
 const CreateAccountPage: React.FC = () => {
@@ -25,7 +26,7 @@ const CreateAccountPage: React.FC = () => {
 
 
   const sendLoginRequest = async () => {
-    const response = await fetch('http://localhost:8080/api/auth/register', {
+          const response = await fetch(API_ENDPOINTS.REGISTER, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({

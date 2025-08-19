@@ -1,5 +1,21 @@
 export const isAuthenticated = (): boolean => {
-  return localStorage.getItem('isAuthenticated') === 'true';
+  const localAuth = localStorage.getItem('isAuthenticated') === 'true';
+  return localAuth;
+};
+
+import { API_ENDPOINTS } from '../config/api';
+
+export const checkAuthWithBackend = async (): Promise<boolean> => {
+  try {
+    const response = await fetch(API_ENDPOINTS.CHECK_AUTH, {
+      method: 'GET',
+      credentials: 'include',
+    });
+    return response.ok;
+  } catch (error) {
+    console.error('Error checking authentication with backend:', error);
+    return false;
+  }
 };
 
 export const getUserData = () => {
